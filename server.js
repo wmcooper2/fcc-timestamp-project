@@ -25,7 +25,7 @@ app.get("/api/hello", function (req, res) {
 });
 
 
-app.get("/api/timestamp", (req, res)=>{
+app.get("/api/timestamp/", (req, res)=>{
   const date = new Date();
   res.json({unix: date.getTime(), utc: date.toUTCString()})
 });
@@ -33,25 +33,20 @@ app.get("/api/timestamp", (req, res)=>{
 
 app.get("/api/timestamp/:date_string", (req, res)=>{
   const date_string = req.params.date_string;
-  // console.log("date_string: ", date_string);
-  // console.log("isNum(date_string): ", !isNaN(date_string));
-  // console.log("Date(): ", new Date(date_string));
   const date = new Date(date_string);
   if (isNaN(date.getTime())){
-    // console.log("convert to num then cast to date");
-    const numToDate = new Date(date_string*1000);
+    const numToDate = new Date(date_string*1);
+    // console.log("numToDate: ", numToDate.toString().length);
+    if (numToDate.toString() == "Invalid Date") {
+      //resort to ducktyping?
+      // res.render('error', { error: err })
+      // https://expressjs.com/en/guide/error-handling.html
+      res.json({error: "Invalid Date"});
+    }
     res.json({unix: numToDate.getTime(), utc: numToDate.toUTCString()})
-    // console.log("numToDate: ", numToDate);
   } else {
     res.json({unix: date.getTime(), utc: date.toUTCString()})
-    
   }
-  // console.log("date.getTime(): ", date.getTime());
-  //something wierd with time strings, times by 1000 then pass to Date()
-  // console.log("Date()*1000: ", new Date(date_string*1000)) //coerces date_string to int
-  // console.log("Date(cat)== Invalid Date: ", Date("cat") === "Invalid Date");
-  
-  // res.json({unix: date.getTime(), utc: date.toUTCString()});
 });
 
 //example input
